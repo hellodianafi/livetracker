@@ -6,53 +6,42 @@
 <title>BWF TOP 10 — Longest Streak Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ══════════════════════════════════════════
-   TOKENS
-══════════════════════════════════════════ */
 :root {
-  --bg:         #F5F2E8;
-  --surface:    rgba(254,252,245,0.92);
-  --surface2:   #EDE9DA;
-  --border:     #D8D2C0;
-  --tropical:   #008471;
+  --bg:         #FDF0F2;
+  --surface:    rgba(255,245,247,0.95);
+  --surface2:   #F5DDE1;
+  --border:     #E8B8C0;
+  --tropical:   #C8294A;
   --pure-sun:   #F4D242;
-  --tomato:     #C45F3F;
-  --airplane:   #80B0E8;
-  --monet:      #898E46;
-  --text:       #1A1A14;
-  --muted:      #7A7565;
+  --tomato:     #A01830;
+  --airplane:   #E8637A;
+  --monet:      #B03050;
+  --text:       #1A0A0D;
+  --muted:      #8A5060;
   --radius:     16px;
   --bg-img:     url('https://i.imgur.com/oUYLxgi.jpeg');
 }
-
 * { margin:0; padding:0; box-sizing:border-box; }
-
 body {
   font-family: 'Work Sans', sans-serif;
   background: var(--bg) var(--bg-img) center/cover fixed;
   color: var(--text);
   min-height: 100vh;
 }
-
-/* tinted overlay so bg doesn't overpower */
 body::before {
-  content:'';
-  position:fixed; inset:0;
-  background: rgba(245,242,232,0.72);
+  content:''; position:fixed; inset:0;
+  background: rgba(253,240,242,0.75);
   pointer-events:none; z-index:0;
 }
 
-/* ══════════════════════════════════════════
-   VIEW TOGGLE
-══════════════════════════════════════════ */
+/* VIEW TOGGLE */
 .view-toggle {
   position:fixed; top:16px; right:16px; z-index:200;
   display:flex; gap:4px;
-  background: rgba(26,26,20,0.75);
+  background: rgba(26,10,13,0.75);
   border-radius:100px; padding:4px;
   backdrop-filter:blur(8px);
 }
-
 .view-btn {
   background:none; border:none; cursor:pointer;
   color:rgba(255,255,255,0.5);
@@ -61,549 +50,290 @@ body::before {
   padding:7px 14px; border-radius:100px;
   transition:all 0.18s;
 }
-
 .view-btn.active { background:var(--tropical); color:#fff; }
 .view-btn:hover:not(.active) { color:#fff; }
 
-/* ══════════════════════════════════════════
-   SHARED CONTAINER WRAPPER
-══════════════════════════════════════════ */
 #webView, #mobileView { position:relative; z-index:1; }
 #mobileView { display:none; }
 
-/* ══════════════════════════════════════════
-   ██  WEB LAYOUT
-══════════════════════════════════════════ */
-.web-container {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 28px 80px;
-}
-
-/* ── Web Header ── */
-.web-header {
-  padding: 56px 0 32px;
-  margin-bottom: 32px;
-  border-bottom: 2px solid var(--border);
-}
-
-.web-header-inner {
-  display:flex; align-items:flex-end;
-  justify-content:space-between; gap:16px; flex-wrap:wrap;
-}
-
-.brand-label {
-  font-size:11px; font-weight:800;
-  letter-spacing:0.3em; color:var(--muted);
-  text-transform:uppercase; margin-bottom:6px;
-  display:block;
-}
-
-.brand-title {
-  font-family:'Libre Baskerville',serif;
-  font-size: clamp(40px,6vw,68px);
-  font-weight:700; line-height:0.9;
-  letter-spacing:-0.02em;
-}
-
+/* WEB */
+.web-container { max-width:960px; margin:0 auto; padding:0 28px 80px; }
+.web-header { padding:56px 0 32px; margin-bottom:32px; border-bottom:2px solid var(--border); }
+.web-header-inner { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.brand-label { font-size:11px; font-weight:800; letter-spacing:0.3em; color:var(--muted); text-transform:uppercase; margin-bottom:6px; display:block; }
+.brand-title { font-family:'Libre Baskerville',serif; font-size:clamp(40px,6vw,68px); font-weight:700; line-height:0.9; letter-spacing:-0.02em; }
 .brand-title span { display:block; font-style:italic; color:var(--tropical); }
-
-.live-badge {
-  display:flex; align-items:center; gap:8px;
-  background:var(--tropical); color:#fff;
-  padding:10px 20px; border-radius:100px;
-  font-size:11px; font-weight:800;
-  letter-spacing:0.15em; text-transform:uppercase;
-  align-self:flex-start;
-}
-
-.live-dot {
-  width:7px; height:7px;
-  background:var(--pure-sun); border-radius:50%;
-  animation:pulse 1.5s ease infinite;
-}
-
-@keyframes pulse {
-  0%,100%{opacity:1;transform:scale(1);}
-  50%{opacity:0.4;transform:scale(0.75);}
-}
-
-.today-date {
-  font-size:12px; color:var(--muted);
-  margin-top:14px; font-weight:500;
-  letter-spacing:0.04em;
-}
-
-/* ── Web Stats Bar ── */
-.web-stats {
-  display:grid; grid-template-columns:repeat(4,1fr);
-  gap:10px; margin-bottom:36px;
-}
-
-.stat-card {
-  border-radius:14px; padding:16px 14px; text-align:center;
-}
-
+.live-badge { display:flex; align-items:center; gap:8px; background:var(--tropical); color:#fff; padding:10px 20px; border-radius:100px; font-size:11px; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; align-self:flex-start; }
+.live-dot { width:7px; height:7px; background:var(--pure-sun); border-radius:50%; animation:pulse 1.5s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.75);} }
+.today-date { font-size:12px; color:var(--muted); margin-top:14px; font-weight:500; letter-spacing:0.04em; }
+.web-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:36px; }
+.stat-card { border-radius:14px; padding:16px 14px; text-align:center; }
 .stat-card:nth-child(1){background:var(--tropical);color:#fff;}
-.stat-card:nth-child(2){background:var(--airplane);color:var(--text);}
+.stat-card:nth-child(2){background:var(--airplane);color:#fff;}
 .stat-card:nth-child(3){background:var(--tomato);color:#fff;}
 .stat-card:nth-child(4){background:var(--pure-sun);color:var(--text);outline:2px solid #d4b430;outline-offset:-2px;}
-
-.stat-num {
-  font-family:'Libre Baskerville',serif;
-  font-size:30px; font-weight:700; line-height:1;
-}
-
-.stat-lbl {
-  font-size:10px; font-weight:700;
-  letter-spacing:0.15em; text-transform:uppercase;
-  margin-top:4px; opacity:0.75;
-}
-
-/* ── Web Section Header ── */
-.web-section-hdr {
-  display:flex; align-items:center;
-  justify-content:space-between;
-  margin-bottom:16px; gap:12px;
-}
-
-.section-title {
-  font-family:'Libre Baskerville',serif;
-  font-size:18px; font-weight:700; font-style:italic;
-  display:flex; align-items:center; gap:10px;
-}
-
-.section-title::after {
-  content:''; display:block;
-  height:2px; width:48px;
-  background:var(--border); border-radius:2px;
-}
-
-.btn-add {
-  background:var(--tropical); color:#fff; border:none;
-  padding:10px 20px; border-radius:100px;
-  font-size:12px; font-weight:800;
-  letter-spacing:0.1em; text-transform:uppercase;
-  cursor:pointer; transition:all 0.15s;
-  display:flex; align-items:center; gap:6px;
-}
-
+.stat-num { font-family:'Libre Baskerville',serif; font-size:30px; font-weight:700; line-height:1; }
+.stat-lbl { font-size:10px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; margin-top:4px; opacity:0.75; }
+.web-section-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:12px; }
+.section-title { font-family:'Libre Baskerville',serif; font-size:18px; font-weight:700; font-style:italic; display:flex; align-items:center; gap:10px; }
+.section-title::after { content:''; display:block; height:2px; width:48px; background:var(--border); border-radius:2px; }
+.btn-add { background:var(--tropical); color:#fff; border:none; padding:10px 20px; border-radius:100px; font-size:12px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
 .btn-add:hover{background:var(--monet);transform:translateY(-1px);}
-
 .divider{height:2px;background:var(--border);border-radius:2px;margin:32px 0;}
 
-/* ── Web Player Card ── */
-.web-card {
-  background:var(--surface);
-  border:2px solid var(--border);
-  border-radius:var(--radius);
-  margin-bottom:10px; overflow:hidden;
-  transition:border-color 0.2s, box-shadow 0.2s;
-  position:relative;
-  backdrop-filter:blur(4px);
-}
-
-.web-card:hover{border-color:var(--tropical);box-shadow:0 4px 24px rgba(0,132,113,0.12);}
-.web-card.special{border-color:#C5C0D8;}
+/* WEB CARD */
+.web-card { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; transition:border-color 0.2s,box-shadow 0.2s; position:relative; backdrop-filter:blur(4px); }
+.web-card:hover{border-color:var(--tropical);box-shadow:0 4px 24px rgba(200,41,74,0.12);}
+.web-card.special{border-color:#E0B8C0;}
 .web-card.special:hover{border-color:var(--airplane);}
-
-.web-card::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:5px;
-  background:var(--tropical);
-}
+.web-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--tropical);}
 .web-card.special::before{background:var(--airplane);}
-
-.web-card-main{
-  display:flex; align-items:center;
-  padding:16px 20px 16px 24px; gap:16px;
-}
-
-.rank-num{
-  font-family:'Libre Baskerville',serif;
-  font-size:28px; font-weight:700; font-style:italic;
-  color:var(--border); min-width:32px; text-align:center; line-height:1;
-}
-
-/* avatar shared */
+.web-card-main{display:flex;align-items:center;padding:16px 20px 16px 24px;gap:16px;}
+.rank-num{font-family:'Libre Baskerville',serif;font-size:28px;font-weight:700;font-style:italic;color:var(--border);min-width:32px;text-align:center;line-height:1;}
 .av-wrap{position:relative;flex-shrink:0;cursor:pointer;}
 .av-wrap input[type="file"]{display:none;}
-
-.av-img{
-  width:56px;height:56px;border-radius:50%;
-  border:2.5px solid var(--border);
-  background:var(--surface2);
-  overflow:hidden; transition:border-color 0.2s;
-}
-
+.av-img{width:56px;height:56px;border-radius:50%;border:2.5px solid var(--border);background:var(--surface2);overflow:hidden;transition:border-color 0.2s;}
 .av-img img{width:100%;height:100%;object-fit:cover;display:block;}
-
-.av-placeholder{
-  width:56px;height:56px;border-radius:50%;
-  border:2.5px solid var(--border);background:var(--surface2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;transition:border-color 0.2s;
-}
-
-.av-wrap:hover .av-img,
-.av-wrap:hover .av-placeholder{border-color:var(--tropical);}
-
-.av-edit{
-  position:absolute;bottom:-1px;right:-1px;
-  background:var(--pure-sun);color:var(--text);
-  font-size:9px;font-weight:900;
-  width:18px;height:18px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-}
-
+.av-placeholder{width:56px;height:56px;border-radius:50%;border:2.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:border-color 0.2s;}
+.av-wrap:hover .av-img,.av-wrap:hover .av-placeholder{border-color:var(--tropical);}
+.av-edit{position:absolute;bottom:-1px;right:-1px;background:var(--pure-sun);color:var(--text);font-size:9px;font-weight:900;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 .player-info{flex:1;min-width:0;}
-
-.player-name{
-  font-size:17px;font-weight:800;
-  text-transform:uppercase;letter-spacing:0.03em;
-  line-height:1.15;
-}
-
-.mob-player-name{
-  font-size:13px;font-weight:800;
-  text-transform:uppercase;letter-spacing:0.03em;
-  line-height:1.15;
-}
-
-.player-meta{
-  font-size:11px;color:var(--muted);margin-top:4px;
-  display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-weight:500;
-}
-
+.player-name{font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:0.03em;line-height:1.15;}
+.player-meta{font-size:11px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-weight:500;}
 .sdot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;}
-.sdot.active{background:var(--tropical);box-shadow:0 0 0 3px rgba(0,132,113,0.2);}
+.sdot.active{background:var(--tropical);box-shadow:0 0 0 3px rgba(200,41,74,0.2);}
 .sdot.inactive{background:var(--tomato);}
-
 .streak-box{text-align:right;flex-shrink:0;min-width:148px;}
-
-.streak-main{
-  font-family:'Libre Baskerville',serif;
-  font-size:20px;font-weight:700;line-height:1;
-  white-space:nowrap;
-}
+.streak-main{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;line-height:1;white-space:nowrap;}
 .streak-main .n{color:var(--tomato);}
-
 .streak-sub{font-size:9.5px;color:var(--muted);letter-spacing:0.06em;margin-top:3px;font-weight:500;white-space:nowrap;}
 .milestone{font-size:15px;margin-top:5px;text-align:right;}
-
-.web-card-actions{
-  display:flex;border-top:1px solid var(--surface2);background:var(--surface2);
-}
-
-.cbtn{
-  flex:1;background:none;border:none;padding:9px;color:var(--muted);
-  font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-  cursor:pointer;transition:all 0.15s;
-  display:flex;align-items:center;justify-content:center;gap:5px;
-}
+.web-card-actions{display:flex;border-top:1px solid var(--surface2);background:var(--surface2);}
+.cbtn{flex:1;background:none;border:none;padding:9px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .cbtn:hover{background:var(--border);color:var(--text);}
 .cbtn.danger:hover{color:var(--tomato);}
+.cbtn.highlight{color:var(--tropical);}
+.cbtn.highlight:hover{background:rgba(200,41,74,0.1);}
 .cbtn+.cbtn{border-left:1px solid var(--border);}
-
-/* special-tag: now inline inside card-main row, not absolute */
-.special-tag{
-  display:inline-flex;align-items:center;
-  font-size:9px;font-weight:800;
-  letter-spacing:0.15em;text-transform:uppercase;
-  color:#5580AA;background:#EAF2FD;
-  border:1px solid var(--airplane);
-  padding:3px 9px;border-radius:100px;
-  white-space:nowrap;flex-shrink:0;
-  align-self:flex-start;margin-top:2px;
-}
-
-.int-info{
-  padding:0 20px 14px 44px;font-size:11px;color:var(--muted);
-  display:flex;gap:14px;flex-wrap:wrap;align-items:center;
-}
+.special-tag{display:inline-flex;align-items:center;font-size:9px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#A03050;background:#FAE8ED;border:1px solid var(--airplane);padding:3px 9px;border-radius:100px;white-space:nowrap;flex-shrink:0;align-self:flex-start;margin-top:2px;}
+.int-info{padding:0 20px 14px 44px;font-size:11px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
 .int-item{display:flex;align-items:center;gap:5px;}
 .int-lbl{text-transform:uppercase;letter-spacing:0.1em;font-size:9.5px;font-weight:700;color:var(--border);}
 .int-stop{color:var(--tomato);font-weight:700;}
 .int-ret{color:var(--tropical);font-weight:700;}
 .int-brk{color:var(--muted);font-weight:600;}
-
 .empty-state{text-align:center;padding:40px;color:var(--muted);font-size:14px;font-style:italic;}
 
-/* ══════════════════════════════════════════
-   ██  MOBILE LAYOUT
-══════════════════════════════════════════ */
-.mobile-frame {
-  max-width:390px;
-  margin:0 auto;
-  padding:0 0 80px;
-  min-height:100vh;
-}
-
-/* Mobile Header */
-.mob-header {
-  padding:52px 20px 20px;
-  background:linear-gradient(180deg,rgba(0,132,113,0.92) 0%,rgba(0,100,86,0.88) 100%);
-  position:relative; overflow:hidden;
-}
-
-.mob-header::before{
-  content:'🏸';
-  position:absolute;right:-20px;top:-10px;
-  font-size:120px;opacity:0.08;
-  transform:rotate(15deg);
-  pointer-events:none;
-}
-
-.mob-brand-label{
-  font-size:10px;font-weight:800;
-  letter-spacing:0.3em;text-transform:uppercase;
-  color:rgba(255,255,255,0.6);margin-bottom:4px;
-}
-
-.mob-brand-title{
-  font-family:'Libre Baskerville',serif;
-  font-size:36px;font-weight:700;line-height:0.92;
-  color:#fff;letter-spacing:-0.02em;
-}
-
+/* MOBILE */
+.mobile-frame{max-width:390px;margin:0 auto;padding:0 0 80px;min-height:100vh;}
+.mob-header{padding:52px 20px 20px;background:linear-gradient(180deg,rgba(180,20,45,0.95) 0%,rgba(140,10,30,0.92) 100%);position:relative;overflow:hidden;}
+.mob-header::before{content:'🏸';position:absolute;right:-20px;top:-10px;font-size:120px;opacity:0.08;transform:rotate(15deg);pointer-events:none;}
+.mob-brand-label{font-size:10px;font-weight:800;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:4px;}
+.mob-brand-title{font-family:'Libre Baskerville',serif;font-size:36px;font-weight:700;line-height:0.92;color:#fff;letter-spacing:-0.02em;}
 .mob-brand-title span{display:block;font-style:italic;color:var(--pure-sun);}
-
-.mob-live-row{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:14px;
-}
-
-.mob-live{
-  display:flex;align-items:center;gap:7px;
-  font-size:10px;font-weight:800;letter-spacing:0.12em;
-  text-transform:uppercase;color:rgba(255,255,255,0.8);
-}
-
+.mob-live-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+.mob-live{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.8);}
 .mob-date{font-size:10px;color:rgba(255,255,255,0.55);font-weight:500;}
-
-/* Mobile Stats */
-.mob-stats{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:0; margin:0;
-}
-
-.mob-stat{
-  padding:12px 8px;text-align:center;
-}
-.mob-stat:nth-child(1){background:rgba(0,84,71,0.95);color:#fff;}
-.mob-stat:nth-child(2){background:rgba(80,140,200,0.95);color:#fff;}
-.mob-stat:nth-child(3){background:rgba(164,65,35,0.95);color:#fff;}
+.mob-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0;}
+.mob-stat{padding:12px 8px;text-align:center;}
+.mob-stat:nth-child(1){background:rgba(140,15,35,0.95);color:#fff;}
+.mob-stat:nth-child(2){background:rgba(200,80,100,0.95);color:#fff;}
+.mob-stat:nth-child(3){background:rgba(80,5,15,0.95);color:#fff;}
 .mob-stat:nth-child(4){background:rgba(200,165,30,0.95);color:#fff;}
-
-.mob-stat-num{
-  font-family:'Libre Baskerville',serif;
-  font-size:22px;font-weight:700;line-height:1;
-}
+.mob-stat-num{font-family:'Libre Baskerville',serif;font-size:22px;font-weight:700;line-height:1;}
 .mob-stat-lbl{font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;opacity:0.8;margin-top:2px;}
-
-/* Mobile Body */
 .mob-body{padding:16px 16px;}
-
-/* Mobile Section Label */
-.mob-section-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:12px;
-}
-
-.mob-section-title{
-  font-family:'Libre Baskerville',serif;
-  font-size:15px;font-weight:700;font-style:italic;
-  color:var(--text);
-  display:flex;align-items:center;gap:8px;
-}
-
-.mob-section-title::after{
-  content:'';display:block;height:2px;width:32px;
-  background:var(--border);border-radius:2px;
-}
-
-.mob-btn-add{
-  background:var(--tropical);color:#fff;border:none;
-  padding:8px 14px;border-radius:100px;
-  font-size:10px;font-weight:800;
-  letter-spacing:0.1em;text-transform:uppercase;
-  cursor:pointer;
-}
-
+.mob-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.mob-section-title{font-family:'Libre Baskerville',serif;font-size:15px;font-weight:700;font-style:italic;color:var(--text);display:flex;align-items:center;gap:8px;}
+.mob-section-title::after{content:'';display:block;height:2px;width:32px;background:var(--border);border-radius:2px;}
+.mob-btn-add{background:var(--tropical);color:#fff;border:none;padding:8px 14px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;}
 .mob-divider{height:2px;background:var(--border);border-radius:2px;margin:20px 0;}
-
-/* Mobile Card */
-.mob-card{
-  background:var(--surface);
-  border:1.5px solid var(--border);
-  border-radius:14px;
-  margin-bottom:8px;overflow:hidden;
-  position:relative;
-  backdrop-filter:blur(4px);
-  transition:border-color 0.2s;
-}
-
-.mob-card.special{border-color:#C5C0D8;}
-
-.mob-card::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
-  background:var(--tropical);
-}
+.mob-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden;position:relative;backdrop-filter:blur(4px);transition:border-color 0.2s;}
+.mob-card.special{border-color:#E0B8C0;}
+.mob-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--tropical);}
 .mob-card.special::before{background:var(--airplane);}
-
-.mob-card-main{
-  display:flex;align-items:center;
-  padding:12px 14px 12px 18px;gap:12px;
-}
-
-.mob-rank{
-  font-family:'Libre Baskerville',serif;
-  font-size:22px;font-weight:700;font-style:italic;
-  color:var(--border);min-width:26px;text-align:center;line-height:1;
-}
-
-/* mobile avatar slightly smaller */
-.mob-card .av-img,
-.mob-card .av-placeholder{width:46px;height:46px;}
+.mob-card-main{display:flex;align-items:center;padding:12px 14px 12px 18px;gap:12px;}
+.mob-rank{font-family:'Libre Baskerville',serif;font-size:22px;font-weight:700;font-style:italic;color:var(--border);min-width:26px;text-align:center;line-height:1;}
+.mob-card .av-img,.mob-card .av-placeholder{width:46px;height:46px;}
 .mob-card .av-placeholder{font-size:18px;}
 .mob-card .av-edit{width:16px;height:16px;font-size:8px;}
-
 .mob-player-info{flex:1;min-width:0;overflow:hidden;}
-
-.mob-player-meta{
-  font-size:10px;color:var(--muted);margin-top:3px;
-  display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-weight:500;
-}
-
+.mob-player-name{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.03em;line-height:1.15;}
+.mob-player-meta{font-size:10px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-weight:500;}
 .mob-streak-box{text-align:right;flex-shrink:0;min-width:110px;}
-
-.mob-streak-main{
-  font-family:'Libre Baskerville',serif;
-  font-size:15px;font-weight:700;line-height:1;
-  white-space:nowrap;
-}
+.mob-streak-main{font-family:'Libre Baskerville',serif;font-size:15px;font-weight:700;line-height:1;white-space:nowrap;}
 .mob-streak-main .n{color:var(--tomato);}
-
 .mob-streak-sub{font-size:8px;color:var(--muted);letter-spacing:0.04em;margin-top:2px;font-weight:500;white-space:nowrap;}
 .mob-milestone{font-size:13px;margin-top:3px;text-align:right;}
-
-.mob-card-actions{
-  display:flex;border-top:1px solid var(--surface2);background:var(--surface2);
-}
-
-.mob-cbtn{
-  flex:1;background:none;border:none;padding:7px;color:var(--muted);
-  font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-  cursor:pointer;transition:all 0.15s;
-  display:flex;align-items:center;justify-content:center;gap:4px;
-}
+.mob-card-actions{display:flex;border-top:1px solid var(--surface2);background:var(--surface2);}
+.mob-cbtn{flex:1;background:none;border:none;padding:7px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:4px;}
 .mob-cbtn:hover{background:var(--border);color:var(--text);}
 .mob-cbtn.danger:hover{color:var(--tomato);}
+.mob-cbtn.highlight{color:var(--tropical);}
+.mob-cbtn.highlight:hover{background:rgba(200,41,74,0.1);}
 .mob-cbtn+.mob-cbtn{border-left:1px solid var(--border);}
+.mob-special-tag{display:inline-flex;align-items:center;font-size:8px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#A03050;background:#FAE8ED;border:1px solid var(--airplane);padding:2px 8px;border-radius:100px;white-space:nowrap;flex-shrink:0;align-self:flex-start;margin-top:2px;}
+.mob-int-info{padding:0 14px 10px 32px;font-size:10px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 
-/* mob special tag: inline in its own row below card-main */
-.mob-special-tag{
-  display:inline-flex;align-items:center;
-  font-size:8px;font-weight:800;
-  letter-spacing:0.15em;text-transform:uppercase;
-  color:#5580AA;background:#EAF2FD;
-  border:1px solid var(--airplane);
-  padding:2px 8px;border-radius:100px;
-  white-space:nowrap;flex-shrink:0;
-  align-self:flex-start;margin-top:2px;
+/* ══ BOTTOM SHEET ══ */
+.sheet-backdrop {
+  display:none; position:fixed; inset:0;
+  background:rgba(26,10,13,0.55);
+  z-index:400; backdrop-filter:blur(4px);
 }
+.sheet-backdrop.open { display:block; }
 
-.mob-int-info{
-  padding:0 14px 10px 32px;font-size:10px;color:var(--muted);
-  display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-}
-
-/* ══════════════════════════════════════════
-   MODAL (shared)
-══════════════════════════════════════════ */
-.modal-overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(26,26,20,0.6);z-index:300;
-  align-items:center;justify-content:center;
-  padding:20px;backdrop-filter:blur(6px);
-}
-.modal-overlay.open{display:flex;}
-
-.modal{
+.bottom-sheet {
+  position:fixed; left:0; right:0; bottom:0;
+  z-index:500;
   background:var(--surface);
-  border:2px solid var(--border);
-  border-radius:20px;
-  width:100%;max-width:460px;
-  padding:28px;
-  animation:slideUp 0.22s ease;
+  border-radius:24px 24px 0 0;
+  border-top:2px solid var(--border);
+  transform:translateY(100%);
+  transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);
+  max-height:90vh;
+  display:flex; flex-direction:column;
+  max-width:680px; margin:0 auto;
+}
+.bottom-sheet.open { transform:translateY(0); }
+
+.sheet-handle {
+  width:40px; height:4px; border-radius:2px;
+  background:var(--border); margin:14px auto 0;
+  flex-shrink:0;
 }
 
-@keyframes slideUp{
-  from{transform:translateY(18px);opacity:0;}
-  to{transform:translateY(0);opacity:1;}
+.sheet-header {
+  padding:16px 24px 12px;
+  border-bottom:1px solid var(--surface2);
+  flex-shrink:0;
+  display:flex; align-items:center; gap:16px;
 }
 
-.modal-title{
+.sheet-av { flex-shrink:0; }
+
+.sheet-title-block { flex:1; min-width:0; }
+
+.sheet-name {
   font-family:'Libre Baskerville',serif;
-  font-size:21px;font-weight:700;font-style:italic;
-  margin-bottom:20px;
+  font-size:20px; font-weight:700;
+  line-height:1.15;
 }
 
+.sheet-sub {
+  font-size:11px; color:var(--muted); margin-top:4px;
+  display:flex; align-items:center; gap:7px; font-weight:500;
+}
+
+.sheet-close {
+  background:var(--surface2); border:1.5px solid var(--border);
+  color:var(--muted); width:34px; height:34px;
+  border-radius:50%; font-size:16px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all 0.15s;
+}
+.sheet-close:hover { background:var(--border); color:var(--text); }
+
+.sheet-body {
+  overflow-y:auto; padding:16px 24px 32px;
+  flex:1;
+}
+
+/* Ranking table inside sheet */
+.rank-section-label {
+  font-size:10px; font-weight:800;
+  letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:10px;
+}
+
+.rank-table {
+  width:100%; border-collapse:collapse;
+  font-size:13px;
+}
+
+.rank-table thead tr {
+  background:var(--tropical); color:#fff;
+}
+
+.rank-table thead th {
+  padding:10px 14px; text-align:left;
+  font-size:10px; font-weight:800;
+  letter-spacing:0.15em; text-transform:uppercase;
+}
+
+.rank-table thead th:not(:first-child) { text-align:center; }
+
+.rank-table tbody tr {
+  border-bottom:1px solid var(--surface2);
+  transition:background 0.12s;
+}
+.rank-table tbody tr:hover { background:var(--surface2); }
+
+.rank-table tbody td {
+  padding:10px 14px;
+  font-weight:600;
+}
+.rank-table tbody td:not(:first-child) { text-align:center; }
+
+.rank-badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:30px; height:30px; border-radius:8px;
+  font-family:'Libre Baskerville',serif;
+  font-size:15px; font-weight:700;
+}
+
+.rank-badge.best {
+  background:rgba(200,41,74,0.12); color:var(--tropical);
+  border:1.5px solid rgba(200,41,74,0.3);
+}
+
+.rank-badge.worst {
+  background:var(--surface2); color:var(--muted);
+  border:1.5px solid var(--border);
+}
+
+.year-cell {
+  font-family:'Libre Baskerville',serif;
+  font-size:14px; font-weight:700; font-style:italic;
+  color:var(--text);
+}
+
+.rank-note {
+  font-size:11px; color:var(--muted); margin-top:14px;
+  padding:10px 14px; background:var(--surface2);
+  border-radius:10px; border-left:3px solid var(--tropical);
+  font-style:italic;
+}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,10,13,0.6);z-index:300;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:2px solid var(--border);border-radius:20px;width:100%;max-width:460px;padding:28px;animation:slideUp 0.22s ease;}
+@keyframes slideUp{from{transform:translateY(18px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-title{font-family:'Libre Baskerville',serif;font-size:21px;font-weight:700;font-style:italic;margin-bottom:20px;}
 .form-row{margin-bottom:13px;}
-
-.form-label{
-  display:block;font-size:10px;font-weight:800;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:6px;
-}
-
-.form-input{
-  width:100%;background:var(--surface2);
-  border:2px solid var(--border);border-radius:10px;
-  padding:10px 14px;color:var(--text);
-  font-family:'Work Sans',sans-serif;
-  font-size:14px;font-weight:500;outline:none;
-  transition:border-color 0.15s;
-}
+.form-label{display:block;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.form-input{width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Work Sans',sans-serif;font-size:14px;font-weight:500;outline:none;transition:border-color 0.15s;}
 .form-input:focus{border-color:var(--tropical);}
-
-.form-check{
-  display:flex;align-items:center;gap:10px;
-  font-size:13px;font-weight:600;
-  cursor:pointer;color:var(--muted);margin-bottom:4px;
-}
+.form-check{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);margin-bottom:4px;}
 .form-check input{cursor:pointer;accent-color:var(--tropical);}
 .form-divider{height:1px;background:var(--border);margin:13px 0;}
-
 .modal-actions{display:flex;gap:10px;margin-top:22px;}
-
-.btn-primary{
-  flex:1;background:var(--tropical);color:#fff;border:none;
-  padding:12px;border-radius:10px;
-  font-size:13px;font-weight:800;
-  text-transform:uppercase;letter-spacing:0.1em;cursor:pointer;
-  transition:background 0.15s;
-}
+.btn-primary{flex:1;background:var(--tropical);color:#fff;border:none;padding:12px;border-radius:10px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;cursor:pointer;transition:background 0.15s;}
 .btn-primary:hover{background:var(--monet);}
-
-.btn-secondary{
-  background:var(--surface2);border:2px solid var(--border);
-  color:var(--muted);padding:12px 18px;border-radius:10px;
-  font-size:13px;font-weight:700;text-transform:uppercase;cursor:pointer;
-}
+.btn-secondary{background:var(--surface2);border:2px solid var(--border);color:var(--muted);padding:12px 18px;border-radius:10px;font-size:13px;font-weight:700;text-transform:uppercase;cursor:pointer;}
 .btn-secondary:hover{color:var(--text);}
 </style>
 </head>
 <body>
 
-<!-- ── VIEW TOGGLE ── -->
 <div class="view-toggle">
   <button class="view-btn active" onclick="setView('web')">🖥 Web</button>
   <button class="view-btn" onclick="setView('mobile')">📱 Mobile</button>
 </div>
 
-<!-- ════════════════════════════════════════
-  WEB VIEW
-════════════════════════════════════════ -->
+<!-- WEB VIEW -->
 <div id="webView">
   <div class="web-container">
     <header class="web-header">
@@ -616,17 +346,13 @@ body::before {
       </div>
       <div class="today-date" id="webDate"></div>
     </header>
-
     <div class="web-stats" id="webStats"></div>
-
     <div class="web-section-hdr">
       <span class="section-title">Active Streaks</span>
       <button class="btn-add" onclick="openModal()">+ Tambah Pemain</button>
     </div>
     <div id="webActiveList"></div>
-
     <div class="divider"></div>
-
     <div class="web-section-hdr">
       <span class="section-title">Special Mention</span>
     </div>
@@ -634,9 +360,7 @@ body::before {
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-  MOBILE VIEW
-════════════════════════════════════════ -->
+<!-- MOBILE VIEW -->
 <div id="mobileView">
   <div class="mobile-frame">
     <div class="mob-header">
@@ -663,9 +387,22 @@ body::before {
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-  MODAL
-════════════════════════════════════════ -->
+<!-- BOTTOM SHEET -->
+<div class="sheet-backdrop" id="sheetBackdrop" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="bottomSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-av" id="sheetAv"></div>
+    <div class="sheet-title-block">
+      <div class="sheet-name" id="sheetName"></div>
+      <div class="sheet-sub" id="sheetSub"></div>
+    </div>
+    <button class="sheet-close" onclick="closeSheet()">×</button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal">
     <div class="modal-title" id="modalTitle">Tambah Pemain</div>
@@ -700,31 +437,62 @@ body::before {
 </div>
 
 <script>
-// ── DATA ──
 const STORAGE_KEY='bwf_top10_v3';
 
 const PHOTOS={
-  1:'https://i.imgur.com/2ZU6QN3.jpeg',  // Huang Dong Ping
-  2:'https://i.imgur.com/JPixBYd.jpeg',  // Akane Yamaguchi
-  3:'https://i.imgur.com/UQuUF6L.jpeg',  // Fajar Alfian
-  4:'https://i.imgur.com/mulSnhV.jpeg',  // Jonatan Christie
-  5:'https://i.imgur.com/ROiVA3D.jpeg',  // Aaron Chia / Soh Wooi Yik
-  6:'https://i.imgur.com/HkZSlor.jpeg',  // An Se Young
+  1:'https://i.imgur.com/2ZU6QN3.jpeg',
+  2:'https://i.imgur.com/JPixBYd.jpeg',
+  3:'https://i.imgur.com/UQuUF6L.jpeg',
+  4:'https://i.imgur.com/mulSnhV.jpeg',
+  5:'https://i.imgur.com/ROiVA3D.jpeg',
+  6:'https://i.imgur.com/HkZSlor.jpeg',
+};
+
+// Ranking data — only Fajar (id=3) for now
+const RANKING_DATA={
+  2:{
+    label:"Ranking BWF Tahunan",
+    rows:[
+      {year:2016,lowest:10,highest:7},
+      {year:2017,lowest:7, highest:2},
+      {year:2018,lowest:5, highest:2},
+      {year:2019,lowest:6, highest:1},
+      {year:2020,lowest:3, highest:3},
+      {year:2021,lowest:5, highest:2},
+      {year:2022,lowest:2, highest:1},
+      {year:2023,lowest:3, highest:1},
+      {year:2024,lowest:8, highest:3},
+      {year:2025,lowest:5, highest:3},
+    ]
+  },
+  3:{
+    label:"Ranking BWF Tahunan",
+    rows:[
+      {year:2018,lowest:10,highest:6},
+      {year:2019,lowest:10,highest:5},
+      {year:2020,lowest:6, highest:5},
+      {year:2021,lowest:8, highest:6},
+      {year:2022,lowest:9, highest:1},
+      {year:2023,lowest:6, highest:1},
+      {year:2024,lowest:7, highest:4},
+      {year:2025,lowest:9, highest:4},
+    ]
+  }
 };
 
 const defaultPlayers=[
-  {id:1, name:"Huang Dong Ping",          start:"2017-09-21",special:false,stop:null,        returnDate:null,        avatar:null},
-  {id:2, name:"Akane Yamaguchi",           start:"2016-09-29",special:false,stop:null,        returnDate:null,        avatar:null},
-  {id:3, name:"Fajar Alfian",              start:"2018-07-05",special:false,stop:null,        returnDate:null,        avatar:null},
-  {id:4, name:"Jonatan Christie",          start:"2019-01-29",special:false,stop:null,        returnDate:null,        avatar:null},
-  {id:5, name:"Aaron Chia / Soh Wooi Yik",start:"2019-12-17",special:false,stop:null,        returnDate:null,        avatar:null},
-  {id:6, name:"An Se Young",               start:"2019-11-12",special:false,stop:null,        returnDate:null,        avatar:null},
-  {id:7, name:"Chen Yu Fei",               start:"2017-05-25",special:true, stop:"2025-01-21",returnDate:"2025-03-25",avatar:null},
-  {id:8, name:"Lee So Hee",                start:"2015-11-19",special:true, stop:"2023-01-24",returnDate:"2023-05-02",avatar:null},
-  {id:9, name:"Jia Yi Fan",                start:"2016-11-17",special:true, stop:"2025-05-20",returnDate:"2025-06-03",avatar:null},
-  {id:10,name:"Ratchanok Intanon",         start:"2012-05-10",special:true, stop:"2023-11-21",returnDate:"2025-05-04",avatar:null},
-  {id:11,name:"Chou Tien Chen",            start:"2014-10-30",special:true, stop:"2023-08-22",returnDate:"2024-08-06",avatar:null},
-  {id:12,name:"Dechapol Puavaranukroh",    start:"2018-10-25",special:true, stop:"2025-01-14",returnDate:"2025-05-20",avatar:null},
+  {id:1, name:"Huang Dong Ping",           start:"2017-09-21",special:false,stop:null,returnDate:null,avatar:null},
+  {id:2, name:"Akane Yamaguchi",            start:"2016-09-29",special:false,stop:null,returnDate:null,avatar:null},
+  {id:3, name:"Fajar Alfian",               start:"2018-07-05",special:false,stop:null,returnDate:null,avatar:null},
+  {id:4, name:"Jonatan Christie",           start:"2019-01-29",special:false,stop:null,returnDate:null,avatar:null},
+  {id:5, name:"Aaron Chia / Soh Wooi Yik", start:"2019-12-17",special:false,stop:null,returnDate:null,avatar:null},
+  {id:6, name:"An Se Young",                start:"2019-11-12",special:false,stop:null,returnDate:null,avatar:null},
+  {id:7, name:"Chen Yu Fei",                start:"2017-05-25",special:true, stop:"2025-01-21",returnDate:"2025-03-25",avatar:null},
+  {id:8, name:"Lee So Hee",                 start:"2015-11-19",special:true, stop:"2023-01-24",returnDate:"2023-05-02",avatar:null},
+  {id:9, name:"Jia Yi Fan",                 start:"2016-11-17",special:true, stop:"2025-05-20",returnDate:"2025-06-03",avatar:null},
+  {id:10,name:"Ratchanok Intanon",          start:"2012-05-10",special:true, stop:"2023-11-21",returnDate:"2025-05-04",avatar:null},
+  {id:11,name:"Chou Tien Chen",             start:"2014-10-30",special:true, stop:"2023-08-22",returnDate:"2024-08-06",avatar:null},
+  {id:12,name:"Dechapol Puavaranukroh",     start:"2018-10-25",special:true, stop:"2025-01-14",returnDate:"2025-05-20",avatar:null},
 ];
 
 function loadPlayers(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):defaultPlayers;}catch{return defaultPlayers;}}
@@ -735,53 +503,27 @@ const TODAY=new Date();TODAY.setHours(0,0,0,0);
 
 function pd(s){return new Date(s+'T00:00:00');}
 function dd(a,b){return Math.floor((b-a)/86400000);}
-
 function totalDays(p){
   const s=pd(p.start);
   if(!p.special||!p.stop||!p.returnDate)return dd(s,TODAY);
   return dd(s,pd(p.stop))+dd(pd(p.returnDate),TODAY);
 }
-
-function breakDays(p){
-  if(!p.stop||!p.returnDate)return 0;
-  return dd(pd(p.stop),pd(p.returnDate));
-}
-
-function fmtDur(d){
-  if(d<0)d=0;
-  const y=Math.floor(d/365),r=d%365;
-  return{years:y,months:Math.floor(r/30),days:r%30};
-}
-
+function breakDays(p){if(!p.stop||!p.returnDate)return 0;return dd(pd(p.stop),pd(p.returnDate));}
+function fmtDur(d){if(d<0)d=0;const y=Math.floor(d/365),r=d%365;return{years:y,months:Math.floor(r/30),days:r%30};}
 function durShort(d){return`${d.years}Y ${d.months}M ${d.days}D`;}
 function durFull(d){return`${d.years} Years, ${d.months} Months, ${d.days} Days`;}
-
-function milestone(y){
-  if(y>=10)return'🏆';if(y>=7)return'⭐';if(y>=5)return'🎖️';if(y>=3)return'💪';return'';
-}
-
-function fmtDate(s){
-  if(!s)return'-';
-  return pd(s).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-}
-
-function getAvatar(p){
-  if(p.avatar)return p.avatar;
-  if(PHOTOS[p.id])return PHOTOS[p.id];
-  return null;
-}
-
+function milestone(y){if(y>=10)return'🏆';if(y>=7)return'⭐';if(y>=5)return'🎖️';if(y>=3)return'💪';return'';}
+function fmtDate(s){if(!s)return'-';return pd(s).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});}
+function getAvatar(p){if(p.avatar)return p.avatar;if(PHOTOS[p.id])return PHOTOS[p.id];return null;}
 function avatarHTML(p){
   const src=getAvatar(p);
   if(src)return`<div class="av-img"><img src="${src}" alt="${p.name}" onerror="this.parentElement.innerHTML=getEmojiHtml('${p.name}')"/></div>`;
   return`<div class="av-placeholder">${getEmoji(p.name)}</div>`;
 }
-
 function getEmojiHtml(name){return`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px">${getEmoji(name)}</div>`;}
-
 function getEmoji(n){const e=['🏸','🥇','⚡','🎯','🔥','💥','🌟','⭐','🚀','💎','🏅','👑'];let h=0;for(let c of n)h+=c.charCodeAt(0);return e[h%e.length];}
 
-// ── VIEW TOGGLE ──
+// VIEW TOGGLE
 let currentView='web';
 function setView(v){
   currentView=v;
@@ -790,16 +532,14 @@ function setView(v){
   document.querySelectorAll('.view-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(v)));
 }
 
-// ── RENDER ──
+// RENDER
 function render(){
   const dateStr=TODAY.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const shortDate=TODAY.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
   document.getElementById('webDate').textContent='Update: '+dateStr;
   document.getElementById('mobDate').textContent=shortDate;
-
   const active=players.filter(p=>!p.special).sort((a,b)=>totalDays(b)-totalDays(a));
   const special=players.filter(p=>p.special).sort((a,b)=>totalDays(b)-totalDays(a));
-
   renderStats(active,special);
   renderWebList('webActiveList',active,false);
   renderWebList('webSpecialList',special,true);
@@ -812,42 +552,37 @@ function renderStats(active,special){
   const longest=all.reduce((m,p)=>Math.max(m,totalDays(p)),0);
   const dur=fmtDur(longest);
   const trophies=all.filter(p=>fmtDur(totalDays(p)).years>=10).length;
-
-  const webHTML=`
+  document.getElementById('webStats').innerHTML=`
     <div class="stat-card"><div class="stat-num">${active.length}</div><div class="stat-lbl">Active</div></div>
     <div class="stat-card"><div class="stat-num">${special.length}</div><div class="stat-lbl">Special</div></div>
     <div class="stat-card"><div class="stat-num">${dur.years}Y</div><div class="stat-lbl">Longest</div></div>
-    <div class="stat-card"><div class="stat-num">${trophies}</div><div class="stat-lbl">🏆 10Y Club</div></div>
-  `;
-  document.getElementById('webStats').innerHTML=webHTML;
-
-  const mobHTML=`
+    <div class="stat-card"><div class="stat-num">${trophies}</div><div class="stat-lbl">🏆 10Y Club</div></div>`;
+  document.getElementById('mobStats').innerHTML=`
     <div class="mob-stat"><div class="mob-stat-num">${active.length}</div><div class="mob-stat-lbl">Active</div></div>
     <div class="mob-stat"><div class="mob-stat-num">${special.length}</div><div class="mob-stat-lbl">Special</div></div>
     <div class="mob-stat"><div class="mob-stat-num">${dur.years}Y</div><div class="mob-stat-lbl">Longest</div></div>
-    <div class="mob-stat"><div class="mob-stat-num">${trophies}</div><div class="mob-stat-lbl">🏆 10Y</div></div>
-  `;
-  document.getElementById('mobStats').innerHTML=mobHTML;
+    <div class="mob-stat"><div class="mob-stat-num">${trophies}</div><div class="mob-stat-lbl">🏆 10Y</div></div>`;
 }
 
-// ── WEB CARDS ──
+// WEB CARDS
 function renderWebList(elId,list,isSpecial){
   const el=document.getElementById(elId);
   if(!list.length){el.innerHTML='<div class="empty-state">Belum ada data.</div>';return;}
   el.innerHTML=list.map((p,i)=>webCard(p,i+1,isSpecial)).join('');
 }
 
+function hasRankingData(id){return!!RANKING_DATA[id];}
+
 function webCard(p,rank,isSpecial){
   const total=totalDays(p),dur=fmtDur(total),ms=milestone(dur.years);
   const bd=breakDays(p),bdur=bd>0?fmtDur(bd):null;
-
   const intHTML=isSpecial&&p.stop?`
     <div class="int-info">
       <span class="int-item"><span class="int-lbl">Terhenti:</span><span class="int-stop">${fmtDate(p.stop)}</span></span>
       ${p.returnDate?`<span class="int-item"><span class="int-lbl">Kembali:</span><span class="int-ret">${fmtDate(p.returnDate)}</span></span>`:''}
       ${bdur?`<span class="int-item"><span class="int-lbl">Jeda:</span><span class="int-brk">${durShort(bdur)}</span></span>`:''}
     </div>`:'';
-
+  const rankBtn=hasRankingData(p.id)?`<button class="cbtn highlight" onclick="openSheet(${p.id})">📊 Ranking</button>`:'';
   return`<div class="web-card${isSpecial?' special':''}" id="wc-${p.id}">
     <div class="web-card-main">
       <div class="rank-num">${rank}</div>
@@ -874,13 +609,14 @@ function webCard(p,rank,isSpecial){
     </div>
     ${intHTML}
     <div class="web-card-actions">
+      ${rankBtn}
       <button class="cbtn" onclick="openModal(${p.id})">✏ Edit</button>
       <button class="cbtn danger" onclick="deletePlayer(${p.id})">✕ Hapus</button>
     </div>
   </div>`;
 }
 
-// ── MOBILE CARDS ──
+// MOBILE CARDS
 function renderMobList(elId,list,isSpecial){
   const el=document.getElementById(elId);
   if(!list.length){el.innerHTML='<div class="empty-state">Belum ada data.</div>';return;}
@@ -890,14 +626,13 @@ function renderMobList(elId,list,isSpecial){
 function mobCard(p,rank,isSpecial){
   const total=totalDays(p),dur=fmtDur(total),ms=milestone(dur.years);
   const bd=breakDays(p),bdur=bd>0?fmtDur(bd):null;
-
   const intHTML=isSpecial&&p.stop?`
     <div class="mob-int-info">
       <span class="int-item"><span class="int-lbl">Terhenti:</span><span class="int-stop">${fmtDate(p.stop)}</span></span>
       ${p.returnDate?`<span class="int-item"><span class="int-lbl">Kembali:</span><span class="int-ret">${fmtDate(p.returnDate)}</span></span>`:''}
       ${bdur?`<span class="int-item"><span class="int-lbl">Jeda:</span><span class="int-brk">${durShort(bdur)}</span></span>`:''}
     </div>`:'';
-
+  const rankBtn=hasRankingData(p.id)?`<button class="mob-cbtn highlight" onclick="openSheet(${p.id})">📊 Ranking</button>`:'';
   return`<div class="mob-card${isSpecial?' special':''}" id="mc-${p.id}">
     <div class="mob-card-main">
       <div class="mob-rank">${rank}</div>
@@ -924,17 +659,15 @@ function mobCard(p,rank,isSpecial){
     </div>
     ${intHTML}
     <div class="mob-card-actions">
+      ${rankBtn}
       <button class="mob-cbtn" onclick="openModal(${p.id})">✏ Edit</button>
       <button class="mob-cbtn danger" onclick="deletePlayer(${p.id})">✕ Hapus</button>
     </div>
   </div>`;
 }
 
-// ── AVATAR UPLOAD ──
-function triggerUpload(id,prefix){
-  document.getElementById(`${prefix==='w'?'w':'m'}AvInput-${id}`).click();
-}
-
+// AVATAR
+function triggerUpload(id,prefix){document.getElementById(`${prefix==='w'?'w':'m'}AvInput-${id}`).click();}
 function handleUpload(event,id){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
@@ -945,7 +678,128 @@ function handleUpload(event,id){
   reader.readAsDataURL(file);
 }
 
-// ── MODAL ──
+// CHART BUILDER
+function buildChart(rows){
+  const W=520,H=180,PL=28,PR=16,PT=14,PB=36;
+  const cW=W-PL-PR, cH=H-PT-PB;
+  const n=rows.length;
+  const allVals=[...rows.map(r=>r.lowest),...rows.map(r=>r.highest)];
+  const minV=Math.min(...allVals)-0.5, maxV=Math.max(...allVals)+0.5;
+  // invert Y: lower rank number = higher on chart
+  const gy=v=>PT+cH*(1-(maxV-v)/(maxV-minV));
+  const gx=i=>PL+i*(cW/(n-1));
+
+  // area fills
+  const lowestPts=rows.map((r,i)=>`${gx(i).toFixed(1)},${gy(r.lowest).toFixed(1)}`).join(' ');
+  const highestPts=rows.map((r,i)=>`${gx(i).toFixed(1)},${gy(r.highest).toFixed(1)}`).join(' ');
+
+  // area polygon (fill under lowest)
+  const lowestArea=`${PL},${PT+cH} `+lowestPts+` ${PL+cW},${PT+cH}`;
+  const highestArea=`${PL},${PT+cH} `+highestPts+` ${PL+cW},${PT+cH}`;
+
+  // y-axis gridlines
+  const yTicks=[];
+  const step=Math.ceil((maxV-minV)/5);
+  for(let v=Math.ceil(minV);v<=Math.floor(maxV);v+=step){
+    const y=gy(v).toFixed(1);
+    yTicks.push(`<line x1="${PL}" x2="${PL+cW}" y1="${y}" y2="${y}" stroke="#E8B8C0" stroke-width="0.8" stroke-dasharray="3,3"/>`);
+    yTicks.push(`<text x="${PL-4}" y="${parseFloat(y)+3.5}" text-anchor="end" font-size="9" fill="#8A5060" font-family="Work Sans,sans-serif">${Math.round(v)}</text>`);
+  }
+
+  // x labels
+  const xLabels=rows.map((r,i)=>`<text x="${gx(i).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="9" fill="#8A5060" font-family="Work Sans,sans-serif">${r.year}</text>`).join('');
+
+  // dots
+  const lowestDots=rows.map((r,i)=>`<circle cx="${gx(i).toFixed(1)}" cy="${gy(r.lowest).toFixed(1)}" r="3.5" fill="#A01830" stroke="#fff" stroke-width="1.5"/>`).join('');
+  const highestDots=rows.map((r,i)=>`<circle cx="${gx(i).toFixed(1)}" cy="${gy(r.highest).toFixed(1)}" r="3.5" fill="#C8294A" stroke="#fff" stroke-width="1.5"/>`).join('');
+
+  return`<div style="background:var(--surface2);border-radius:14px;padding:14px 10px 6px;border:1.5px solid var(--border);">
+    <div style="display:flex;gap:16px;margin-bottom:8px;padding:0 4px;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;">
+        <span style="width:12px;height:3px;background:#C8294A;border-radius:2px;display:inline-block"></span>Ranking Tertinggi
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;">
+        <span style="width:12px;height:3px;background:#A01830;border-radius:2px;display:inline-block"></span>Ranking Terendah
+      </div>
+    </div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gradH" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#C8294A" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#C8294A" stop-opacity="0.03"/>
+        </linearGradient>
+        <linearGradient id="gradL" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#A01830" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#A01830" stop-opacity="0.02"/>
+        </linearGradient>
+      </defs>
+      ${yTicks.join('')}
+      <polygon points="${lowestArea}" fill="url(#gradL)"/>
+      <polygon points="${highestArea}" fill="url(#gradH)"/>
+      <polyline points="${lowestPts}" fill="none" stroke="#A01830" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <polyline points="${highestPts}" fill="none" stroke="#C8294A" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+      ${lowestDots}
+      ${highestDots}
+      ${xLabels}
+    </svg>
+    <div style="text-align:center;font-size:9px;color:var(--muted);margin-top:-2px;letter-spacing:0.06em;">↑ posisi lebih tinggi = ranking lebih baik</div>
+  </div>`;
+}
+
+// BOTTOM SHEET
+function openSheet(id){
+  const p=players.find(x=>x.id===id);
+  const rd=RANKING_DATA[id];
+  if(!p||!rd)return;
+
+  const total=totalDays(p),dur=fmtDur(total);
+  const src=getAvatar(p);
+  const avHTML=src
+    ?`<div class="av-img" style="width:52px;height:52px"><img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/></div>`
+    :`<div class="av-placeholder" style="width:52px;height:52px;font-size:20px">${getEmoji(p.name)}</div>`;
+
+  document.getElementById('sheetAv').innerHTML=avHTML;
+  document.getElementById('sheetName').textContent=p.name;
+  document.getElementById('sheetSub').innerHTML=`
+    <span class="sdot ${p.special?'inactive':'active'}"></span>
+    Sejak ${fmtDate(p.start)} &bull; <strong>${durShort(dur)}</strong>`;
+
+  // Build table
+  const bestHighest=Math.min(...rd.rows.map(r=>r.highest));
+  const rows=rd.rows.map(r=>`
+    <tr>
+      <td class="year-cell">${r.year}</td>
+      <td><span class="rank-badge worst">${r.lowest}</span></td>
+      <td><span class="rank-badge best${r.highest===bestHighest?' best':''}">${r.highest}</span></td>
+    </tr>`).join('');
+
+  document.getElementById('sheetBody').innerHTML=`
+    <div class="rank-section-label" style="margin-bottom:10px">${rd.label}</div>
+    ${buildChart(rd.rows)}
+    <table class="rank-table" style="margin-top:18px">
+      <thead>
+        <tr>
+          <th>Tahun</th>
+          <th>Terendah</th>
+          <th>Tertinggi</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="rank-note">Angka ranking BWF — semakin kecil semakin baik. Ranking tertinggi = peringkat terbaik yang pernah dicapai pada tahun tersebut.</div>`;
+
+  document.getElementById('sheetBackdrop').classList.add('open');
+  document.getElementById('bottomSheet').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeSheet(){
+  document.getElementById('sheetBackdrop').classList.remove('open');
+  document.getElementById('bottomSheet').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// MODAL
 function openModal(id=null){
   editingId=id;
   document.getElementById('modalTitle').textContent=id?'Edit Pemain':'Tambah Pemain';
@@ -958,18 +812,16 @@ function openModal(id=null){
     document.getElementById('fReturn').value=p.returnDate||'';
     toggleSpecialFields();
   }else{
-    ['fName','fStop','fReturn'].forEach(id=>document.getElementById(id).value='');
+    ['fName','fStop','fReturn'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('fStart').value='';
     document.getElementById('fSpecial').checked=false;
     document.getElementById('specialFields').style.display='none';
   }
   document.getElementById('modalOverlay').classList.add('open');
 }
-
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');editingId=null;}
 function handleOverlayClick(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
 function toggleSpecialFields(){document.getElementById('specialFields').style.display=document.getElementById('fSpecial').checked?'block':'none';}
-
 function savePlayer(){
   const name=document.getElementById('fName').value.trim();
   const start=document.getElementById('fStart').value;
@@ -985,7 +837,6 @@ function savePlayer(){
   }
   savePlayers(players);closeModal();render();
 }
-
 function deletePlayer(id){
   const p=players.find(x=>x.id===id);
   if(!p||!confirm(`Hapus "${p.name}"?`))return;
