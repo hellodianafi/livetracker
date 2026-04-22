@@ -441,15 +441,35 @@ const STORAGE_KEY='bwf_top10_v3';
 
 const PHOTOS={
   1:'https://i.imgur.com/2ZU6QN3.jpeg',
-  2:'https://i.imgur.com/JPixBYd.jpeg',
+  2:'https://i.imgur.com/HczfpEG.jpeg',
   3:'https://i.imgur.com/UQuUF6L.jpeg',
   4:'https://i.imgur.com/mulSnhV.jpeg',
   5:'https://i.imgur.com/ROiVA3D.jpeg',
   6:'https://i.imgur.com/HkZSlor.jpeg',
+  7:'https://i.imgur.com/jJSFdKP.jpeg',
+  11:'https://i.imgur.com/n5WW4fn.jpeg',
+  12:'https://i.imgur.com/vtb6Dht.jpeg',
+  9:'https://i.imgur.com/38QMlFw.jpeg',
+  8:'https://i.imgur.com/2Afhfxd.jpeg',
+  10:'https://i.imgur.com/o4UlqIS.jpeg',
 };
 
 // Ranking data — only Fajar (id=3) for now
 const RANKING_DATA={
+  1:{
+    label:"Ranking BWF Tahunan",
+    rows:[
+      {year:2017,lowest:97,highest:4,  note:"Start Partnership with Wang Yi Lyu"},
+      {year:2018,lowest:4, highest:1},
+      {year:2019,lowest:2, highest:2},
+      {year:2020,lowest:2, highest:2},
+      {year:2021,lowest:3, highest:2},
+      {year:2022,lowest:4, highest:3},
+      {year:2023,lowest:10,highest:2,  note:"Enter TOP10 with Feng Yan Zhe"},
+      {year:2024,lowest:4, highest:1},
+      {year:2025,lowest:2, highest:1},
+    ]
+  },
   2:{
     label:"Ranking BWF Tahunan",
     rows:[
@@ -680,24 +700,24 @@ function handleUpload(event,id){
 
 // CHART BUILDER
 function buildChart(rows){
-  const W=520,H=180,PL=28,PR=16,PT=14,PB=36;
+  const W=520,H=190,PL=28,PR=16,PT=14,PB=36;
   const cW=W-PL-PR, cH=H-PT-PB;
   const n=rows.length;
-  const allVals=[...rows.map(r=>r.lowest),...rows.map(r=>r.highest)];
+
+  // cap outliers for chart display (e.g. 97 → show as capped)
+  const CAP=12;
+  const chartRows=rows.map(r=>({...r,lowestChart:Math.min(r.lowest,CAP),highestChart:r.highest}));
+  const allVals=[...chartRows.map(r=>r.lowestChart),...chartRows.map(r=>r.highestChart)];
   const minV=Math.min(...allVals)-0.5, maxV=Math.max(...allVals)+0.5;
-  // invert Y: lower rank number = higher on chart
+
   const gy=v=>PT+cH*(1-(maxV-v)/(maxV-minV));
   const gx=i=>PL+i*(cW/(n-1));
 
-  // area fills
-  const lowestPts=rows.map((r,i)=>`${gx(i).toFixed(1)},${gy(r.lowest).toFixed(1)}`).join(' ');
-  const highestPts=rows.map((r,i)=>`${gx(i).toFixed(1)},${gy(r.highest).toFixed(1)}`).join(' ');
-
-  // area polygon (fill under lowest)
+  const lowestPts=chartRows.map((r,i)=>`${gx(i).toFixed(1)},${gy(r.lowestChart).toFixed(1)}`).join(' ');
+  const highestPts=chartRows.map((r,i)=>`${gx(i).toFixed(1)},${gy(r.highestChart).toFixed(1)}`).join(' ');
   const lowestArea=`${PL},${PT+cH} `+lowestPts+` ${PL+cW},${PT+cH}`;
   const highestArea=`${PL},${PT+cH} `+highestPts+` ${PL+cW},${PT+cH}`;
 
-  // y-axis gridlines
   const yTicks=[];
   const step=Math.ceil((maxV-minV)/5);
   for(let v=Math.ceil(minV);v<=Math.floor(maxV);v+=step){
@@ -706,15 +726,29 @@ function buildChart(rows){
     yTicks.push(`<text x="${PL-4}" y="${parseFloat(y)+3.5}" text-anchor="end" font-size="9" fill="#8A5060" font-family="Work Sans,sans-serif">${Math.round(v)}</text>`);
   }
 
-  // x labels
   const xLabels=rows.map((r,i)=>`<text x="${gx(i).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="9" fill="#8A5060" font-family="Work Sans,sans-serif">${r.year}</text>`).join('');
 
-  // dots
-  const lowestDots=rows.map((r,i)=>`<circle cx="${gx(i).toFixed(1)}" cy="${gy(r.lowest).toFixed(1)}" r="3.5" fill="#A01830" stroke="#fff" stroke-width="1.5"/>`).join('');
-  const highestDots=rows.map((r,i)=>`<circle cx="${gx(i).toFixed(1)}" cy="${gy(r.highest).toFixed(1)}" r="3.5" fill="#C8294A" stroke="#fff" stroke-width="1.5"/>`).join('');
+  // special markers for capped outlier dots
+  const lowestDots=chartRows.map((r,i)=>{
+    const cx=gx(i).toFixed(1),cy=gy(r.lowestChart).toFixed(1);
+    const isCapped=r.lowest>CAP;
+    return isCapped
+      ? `<circle cx="${cx}" cy="${cy}" r="4" fill="#fff" stroke="#A01830" stroke-width="2" stroke-dasharray="2,1"/>
+         <text x="${cx}" y="${parseFloat(cy)-7}" text-anchor="middle" font-size="8" fill="#A01830" font-weight="700" font-family="Work Sans,sans-serif">${r.lowest}*</text>`
+      : `<circle cx="${cx}" cy="${cy}" r="3.5" fill="#A01830" stroke="#fff" stroke-width="1.5"/>`;
+  }).join('');
+
+  const highestDots=chartRows.map((r,i)=>`<circle cx="${gx(i).toFixed(1)}" cy="${gy(r.highestChart).toFixed(1)}" r="3.5" fill="#C8294A" stroke="#fff" stroke-width="1.5"/>`).join('');
+
+  // note markers on x-axis
+  const noteMarkers=rows.map((r,i)=>r.note
+    ?`<text x="${gx(i).toFixed(1)}" y="${PT+cH+2}" text-anchor="middle" font-size="11" fill="#C8294A">★</text>`
+    :'').join('');
+
+  const hasCapped=rows.some(r=>r.lowest>CAP);
 
   return`<div style="background:var(--surface2);border-radius:14px;padding:14px 10px 6px;border:1.5px solid var(--border);">
-    <div style="display:flex;gap:16px;margin-bottom:8px;padding:0 4px;">
+    <div style="display:flex;gap:16px;margin-bottom:8px;padding:0 4px;flex-wrap:wrap;">
       <div style="display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;">
         <span style="width:12px;height:3px;background:#C8294A;border-radius:2px;display:inline-block"></span>Ranking Tertinggi
       </div>
@@ -740,9 +774,10 @@ function buildChart(rows){
       <polyline points="${highestPts}" fill="none" stroke="#C8294A" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
       ${lowestDots}
       ${highestDots}
+      ${noteMarkers}
       ${xLabels}
     </svg>
-    <div style="text-align:center;font-size:9px;color:var(--muted);margin-top:-2px;letter-spacing:0.06em;">↑ posisi lebih tinggi = ranking lebih baik</div>
+    <div style="text-align:center;font-size:9px;color:var(--muted);margin-top:-2px;letter-spacing:0.06em;">↑ posisi lebih tinggi = ranking lebih baik${hasCapped?' &nbsp;·&nbsp; * nilai asli di luar skala chart':''}</div>
   </div>`;
 }
 
@@ -771,6 +806,7 @@ function openSheet(id){
       <td class="year-cell">${r.year}</td>
       <td><span class="rank-badge worst">${r.lowest}</span></td>
       <td><span class="rank-badge best${r.highest===bestHighest?' best':''}">${r.highest}</span></td>
+      ${r.note?`<td style="font-size:10px;color:var(--muted);font-style:italic;padding-left:4px">★ ${r.note}</td>`:'<td></td>'}
     </tr>`).join('');
 
   document.getElementById('sheetBody').innerHTML=`
