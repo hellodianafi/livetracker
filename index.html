@@ -471,6 +471,11 @@ body{font-family:'Work Sans',sans-serif;color:var(--text);min-height:100vh;backg
     <div id="webActiveList"></div>
     <div class="divider"></div>
     <div id="webSpecialList"></div>
+
+    <div style="margin-top:40px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:8px;">
+      <span style="font-size:11px;color:var(--muted);font-weight:500;letter-spacing:0.04em;">Foto pemain:</span>
+      <a href="https://www.djarumbadminton.com" target="_blank" rel="noopener" style="font-size:11px;font-weight:800;color:var(--tropical);letter-spacing:0.06em;text-decoration:none;text-transform:uppercase;border-bottom:1.5px solid rgba(200,41,74,0.3);padding-bottom:1px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--tropical)'" onmouseout="this.style.borderColor='rgba(200,41,74,0.3)'">© Djarum Badminton</a>
+    </div>
   </div>
 </div>
 
@@ -516,6 +521,11 @@ body{font-family:'Work Sans',sans-serif;color:var(--text);min-height:100vh;backg
       <div id="mobActiveList"></div>
       <div class="mob-divider"></div>
       <div id="mobSpecialList"></div>
+
+      <div style="margin-top:28px;padding-top:14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:6px;">
+        <span style="font-size:10px;color:var(--muted);font-weight:500;">Foto pemain:</span>
+        <a href="https://www.djarumbadminton.com" target="_blank" rel="noopener" style="font-size:10px;font-weight:800;color:var(--tropical);letter-spacing:0.06em;text-decoration:none;text-transform:uppercase;border-bottom:1.5px solid rgba(200,41,74,0.3);padding-bottom:1px;">© Djarum Badminton</a>
+      </div>
     </div>
   </div>
 </div>
@@ -584,6 +594,33 @@ const RANKING_DATA={
     {year:2020,lowest:6,highest:5},{year:2021,lowest:8,highest:6},
     {year:2022,lowest:9,highest:1},{year:2023,lowest:6,highest:1},
     {year:2024,lowest:7,highest:4},{year:2025,lowest:9,highest:4},
+  ]},
+  4:{label:"Ranking BWF Tahunan",rows:[
+    {year:2019,lowest:12,highest:4},
+    {year:2020,lowest:7,highest:6},
+    {year:2021,lowest:8,highest:7},
+    {year:2022,lowest:8,highest:4},
+    {year:2023,lowest:10,highest:2},
+    {year:2024,lowest:9,highest:3},
+    {year:2025,lowest:6,highest:2},
+  ]},
+  5:{label:"Ranking BWF Tahunan",rows:[
+    {year:2019,lowest:23,highest:8},
+    {year:2020,lowest:10,highest:8},
+    {year:2021,lowest:9,highest:6},
+    {year:2022,lowest:9,highest:3},
+    {year:2023,lowest:6,highest:2},
+    {year:2024,lowest:6,highest:3},
+    {year:2025,lowest:6,highest:2},
+  ]},
+  6:{label:"Ranking BWF Tahunan",rows:[
+    {year:2019,lowest:100,highest:9},
+    {year:2020,lowest:9,highest:9},
+    {year:2021,lowest:8,highest:4},
+    {year:2022,lowest:4,highest:2},
+    {year:2023,lowest:4,highest:1},
+    {year:2024,lowest:2,highest:1},
+    {year:2025,lowest:1,highest:1},
   ]},
 };
 
@@ -782,6 +819,10 @@ function buildChart(rows){
   const gy=v=>PT+cH*(1-(maxV-v)/(maxV-minV)),gx=i=>PL+i*(cW/(n-1));
   const lPts=cr.map((r,i)=>`${gx(i).toFixed(1)},${gy(r.lowestChart).toFixed(1)}`).join(' ');
   const hPts=cr.map((r,i)=>`${gx(i).toFixed(1)},${gy(r.highest).toFixed(1)}`).join(' ');
+
+  // colors: highest = tropical red, lowest = muted steel blue
+  const C_HIGH='#C8294A', C_LOW='#4A7FB5';
+
   const yTicks=[];
   for(let v=Math.ceil(minV);v<=Math.floor(maxV);v+=Math.ceil((maxV-minV)/5)){
     const y=gy(v).toFixed(1);
@@ -789,25 +830,43 @@ function buildChart(rows){
     yTicks.push(`<text x="${PL-4}" y="${parseFloat(y)+3.5}" text-anchor="end" font-size="9" fill="#8A5060" font-family="Work Sans,sans-serif">${Math.round(v)}</text>`);
   }
   const xL=rows.map((r,i)=>`<text x="${gx(i).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="9" fill="#8A5060" font-family="Work Sans,sans-serif">${r.year}</text>`).join('');
-  const lDots=cr.map((r,i)=>{const cx=gx(i).toFixed(1),cy=gy(r.lowestChart).toFixed(1);return r.lowest>CAP?`<circle cx="${cx}" cy="${cy}" r="4" fill="#fff" stroke="#A01830" stroke-width="2" stroke-dasharray="2,1"/><text x="${cx}" y="${parseFloat(cy)-7}" text-anchor="middle" font-size="8" fill="#A01830" font-weight="700" font-family="Work Sans,sans-serif">${r.lowest}*</text>`:`<circle cx="${cx}" cy="${cy}" r="3.5" fill="#A01830" stroke="#fff" stroke-width="1.5"/>`;}).join('');
-  const hDots=cr.map((r,i)=>`<circle cx="${gx(i).toFixed(1)}" cy="${gy(r.highest).toFixed(1)}" r="3.5" fill="#C8294A" stroke="#fff" stroke-width="1.5"/>`).join('');
-  const notes=rows.map((r,i)=>r.note?`<text x="${gx(i).toFixed(1)}" y="${PT+cH+2}" text-anchor="middle" font-size="11" fill="#C8294A">★</text>`:'').join('');
+
+  const lDots=cr.map((r,i)=>{
+    const cx=gx(i).toFixed(1),cy=gy(r.lowestChart).toFixed(1);
+    return r.lowest>CAP
+      ?`<circle cx="${cx}" cy="${cy}" r="4" fill="#fff" stroke="${C_LOW}" stroke-width="2" stroke-dasharray="2,1"/><text x="${cx}" y="${parseFloat(cy)-7}" text-anchor="middle" font-size="8" fill="${C_LOW}" font-weight="700" font-family="Work Sans,sans-serif">${r.lowest}*</text>`
+      :`<circle cx="${cx}" cy="${cy}" r="3.5" fill="${C_LOW}" stroke="#fff" stroke-width="1.5"/>`;
+  }).join('');
+
+  const hDots=cr.map((r,i)=>`<circle cx="${gx(i).toFixed(1)}" cy="${gy(r.highest).toFixed(1)}" r="3.5" fill="${C_HIGH}" stroke="#fff" stroke-width="1.5"/>`).join('');
+  const notes=rows.map((r,i)=>r.note?`<text x="${gx(i).toFixed(1)}" y="${PT+cH+2}" text-anchor="middle" font-size="11" fill="${C_HIGH}">★</text>`:'').join('');
   const hasCapped=rows.some(r=>r.lowest>CAP);
+
   return`<div style="background:var(--surface2);border-radius:14px;padding:14px 10px 6px;border:1.5px solid var(--border);">
-    <div style="display:flex;gap:16px;margin-bottom:8px;padding:0 4px;flex-wrap:wrap;">
-      <div style="display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;"><span style="width:12px;height:3px;background:#C8294A;border-radius:2px;display:inline-block"></span>Ranking Tertinggi</div>
-      <div style="display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;"><span style="width:12px;height:3px;background:#A01830;border-radius:2px;display:inline-block"></span>Ranking Terendah</div>
+    <div style="display:flex;gap:20px;margin-bottom:8px;padding:0 4px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;">
+        <span style="width:24px;height:3px;background:${C_HIGH};border-radius:2px;display:inline-block"></span>Ranking Tertinggi
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;">
+        <span style="width:24px;height:3px;background:${C_LOW};border-radius:2px;display:inline-block;opacity:0.85"></span>Ranking Terendah
+      </div>
     </div>
     <svg viewBox="0 0 ${W} ${H}" width="100%" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="gradH" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8294A" stop-opacity="0.25"/><stop offset="100%" stop-color="#C8294A" stop-opacity="0.03"/></linearGradient>
-        <linearGradient id="gradL" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A01830" stop-opacity="0.18"/><stop offset="100%" stop-color="#A01830" stop-opacity="0.02"/></linearGradient>
+        <linearGradient id="gradH" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${C_HIGH}" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="${C_HIGH}" stop-opacity="0.02"/>
+        </linearGradient>
+        <linearGradient id="gradL" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${C_LOW}" stop-opacity="0.16"/>
+          <stop offset="100%" stop-color="${C_LOW}" stop-opacity="0.02"/>
+        </linearGradient>
       </defs>
       ${yTicks.join('')}
       <polygon points="${PL},${PT+cH} ${lPts} ${PL+cW},${PT+cH}" fill="url(#gradL)"/>
       <polygon points="${PL},${PT+cH} ${hPts} ${PL+cW},${PT+cH}" fill="url(#gradH)"/>
-      <polyline points="${lPts}" fill="none" stroke="#A01830" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-      <polyline points="${hPts}" fill="none" stroke="#C8294A" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+      <polyline points="${lPts}" fill="none" stroke="${C_LOW}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>
+      <polyline points="${hPts}" fill="none" stroke="${C_HIGH}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
       ${lDots}${hDots}${notes}${xL}
     </svg>
     <div style="text-align:center;font-size:9px;color:var(--muted);margin-top:-2px;letter-spacing:0.06em;">↑ posisi lebih tinggi = ranking lebih baik${hasCapped?' · * nilai asli di luar skala chart':''}</div>
